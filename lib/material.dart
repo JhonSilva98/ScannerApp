@@ -18,10 +18,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime currentTime = DateTime.now();
+
     GlobalVariable().myVariable = {
       "hora": currentTime.hour.toDouble(),
       "minuto": currentTime.minute.toDouble(),
-      "secundos": currentTime.second.toDouble()
+      "segundos": currentTime.second.toDouble()
     };
     return MaterialApp(
       title: 'Scanner App',

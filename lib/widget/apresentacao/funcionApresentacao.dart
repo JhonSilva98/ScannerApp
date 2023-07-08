@@ -8,7 +8,7 @@ Future<Widget> checkFirstSeen() async {
   bool _seen = (prefs.getBool('seen') ?? false);
 
   if (!_seen) {
-    // Navegue para a tela que você deseja mostrar apenas uma vez
+    // Navegar para a tela que você deseja mostrar apenas uma vez
     await prefs.setBool('seen', true);
     return MyHomePage();
   } else {

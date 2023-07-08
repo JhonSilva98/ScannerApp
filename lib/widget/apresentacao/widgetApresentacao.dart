@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/widget/final/widgetFinal.dart';
 
-//api Scanner https://pub.dev/packages/document_scanner_flutter/install
-
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 

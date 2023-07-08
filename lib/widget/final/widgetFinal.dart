@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/material.dart';
-import 'package:scanner_app/widget/final/funcionScanner.dart';
+import 'package:scanner_app/widget/final/funcionDigit.dart';
 /*import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart'
@@ -31,6 +31,11 @@ class _WidgetFinalState extends State<WidgetFinal> {
   var imageFile;
   String textoDigit = "";
   BuildContext? dialogContext;
+  void setStateCallback() {
+    setState(() {
+      // Atualize o estado ou execute outras ações necessárias
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +64,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
                     'Olá, ${hora()}',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 50.0,
+                      fontSize: 30.0,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -76,6 +81,18 @@ class _WidgetFinalState extends State<WidgetFinal> {
                   topLeft: Radius.circular(50.0),
                   topRight: Radius.circular(50.0),
                 ),
+              ),
+              child: GridView.builder(
+                itemCount: digit.listWidgetDigit.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 10.0,
+                  childAspectRatio: 1.0,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return digit.retornoWidget(index);
+                },
               ),
             ),
           ),
@@ -152,7 +169,8 @@ class _WidgetFinalState extends State<WidgetFinal> {
                             leading: Icon(Icons.camera_alt),
                             title: Text('Tirar foto'),
                             onTap: () {
-                              digit.getImageCamera(dialogContext!);
+                              digit.getImageCamera(
+                                  dialogContext!, setStateCallback);
                               Navigator.pop(dialogContext!);
                             },
                           ),
@@ -160,7 +178,8 @@ class _WidgetFinalState extends State<WidgetFinal> {
                             leading: Icon(Icons.photo),
                             title: Text('Escolher foto da galeria'),
                             onTap: () {
-                              digit.getImageGallery(dialogContext!);
+                              digit.getImageGallery(
+                                  dialogContext!, setStateCallback);
                               Navigator.pop(dialogContext!);
                             },
                           ),
@@ -175,130 +194,4 @@ class _WidgetFinalState extends State<WidgetFinal> {
       ),
     );
   }
-
-  /*void getImageGallery() async {
-    try {
-      final pickedImage =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (pickedImage != null) {
-        cropImage(pickedImage);
-      }
-    } catch (e) {
-      imageFile = null;
-    }
-  }
-
-  void getImageCamera() async {
-    try {
-      final pickedImage =
-          await ImagePicker().pickImage(source: ImageSource.camera);
-      if (pickedImage != null) {
-        cropImage(pickedImage);
-      }
-    } catch (e) {
-      imageFile = null;
-    }
-  }
-
-  void getRecognisedText(rec.InputImage image) async {
-    // Verifica se o State ainda está ativo
-
-    final textRecognizer =
-        rec.TextRecognizer(script: rec.TextRecognitionScript.latin);
-    final rec.RecognizedText recognizedText =
-        await textRecognizer.processImage(image);
-// Verifica novamente se o State ainda está ativo
-    setState(() {
-      textoDigit = recognizedText.text;
-      print(textoDigit);
-    });
-  }
-
-  Future<void> cropImage(XFile picked) async {
-    final croppedFile = await ImageCropper().cropImage(
-      sourcePath: picked.path,
-      compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 100,
-      uiSettings: [
-        AndroidUiSettings(
-            toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Cropper',
-        ),
-        WebUiSettings(
-          context: context,
-          presentStyle: CropperPresentStyle.dialog,
-          boundary: const CroppieBoundary(
-            width: 520,
-            height: 520,
-          ),
-          viewPort:
-              const CroppieViewPort(width: 480, height: 480, type: 'circle'),
-          enableExif: true,
-          enableZoom: true,
-          showZoomer: true,
-        ),
-      ],
-    );
-    if (croppedFile != null) {
-      setState(() {
-        XFile xFile = XFile(croppedFile.path);
-        imageFile = rec.InputImage.fromFilePath(xFile.path);
-        getRecognisedText(imageFile);
-        showDialog(
-          context: context,
-          barrierDismissible:
-              false, // Impede o fechamento do popup ao tocar fora dele
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16.0),
-                  Text('Carregando...'),
-                ],
-              ),
-            );
-          },
-        );
-        Future.delayed(Duration(seconds: 3), () {
-          Navigator.pop(context); // Fecha o popup após 5 segundos
-        });
-      });
-    }
-  }*/
 }
-
-/*Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(20),
-          ),
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20)),
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF359fe7),
-                    Color(0xFFb9b2fb),
-                  ])),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.camera_alt),
-      ),
-    );*/
