@@ -91,6 +91,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
                   childAspectRatio: 1.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
+                  //print("_________ $index");
                   return digit.retornoWidget(index);
                 },
               ),

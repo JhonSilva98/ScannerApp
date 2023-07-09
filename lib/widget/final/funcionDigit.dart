@@ -39,37 +39,23 @@ class DigitarUp {
           },
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              child: Icon(Icons.text_fields_rounded,
-                  size: 24, color: Color(0xFF095ba4)),
-              padding: const EdgeInsets.all(12),
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(12),
-                      bottomLeft: Radius.circular(12))),
-              child: Text("Txt ${GlobalVariable().myVariable["segundos"]!}"),
-              padding: const EdgeInsets.all(12),
-            )
-          ],
-        ),
+      child: Column(
+        children: [
+          Container(
+            child: Icon(Icons.text_fields_rounded,
+                size: 24, color: Color(0xFF095ba4)),
+            padding: const EdgeInsets.all(12),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+                color: Colors.blueAccent,
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(12),
+                    bottomLeft: Radius.circular(12))),
+            child: Text("Txt ${GlobalVariable().myVariable["segundos"]!}"),
+            padding: const EdgeInsets.all(12),
+          )
+        ],
       ),
     );
   }
