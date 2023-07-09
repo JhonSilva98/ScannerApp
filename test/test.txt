@@ -30,54 +30,11 @@ class _WidgetFinalState extends State<WidgetFinal> {
   DigitarUp digit = DigitarUp();
   var imageFile;
   String textoDigit = "";
-  List<Widget> widgetFim = [];
   BuildContext? dialogContext;
   void setStateCallback() {
     setState(() {
       // Atualize o estado ou execute outras ações necessárias
     });
-  }
-
-  Widget getWidgetDigit(String text) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Texto digitalizado'),
-              content: Text('$text'),
-              actions: [
-                TextButton(
-                  child: Text('Fechar'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-      child: Column(
-        children: [
-          Container(
-            child: Icon(Icons.text_fields_rounded,
-                size: 24, color: Color(0xFF095ba4)),
-            padding: const EdgeInsets.all(12),
-          ),
-          Container(
-            decoration: const BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(12),
-                    bottomLeft: Radius.circular(12))),
-            child: Text("Txt ${GlobalVariable().myVariable["segundos"]!}"),
-            padding: const EdgeInsets.all(12),
-          )
-        ],
-      ),
-    );
   }
 
   @override
@@ -126,7 +83,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
                 ),
               ),
               child: GridView.builder(
-                itemCount: widgetFim.length,
+                itemCount: digit.listWidgetDigit.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 10.0,
@@ -134,7 +91,8 @@ class _WidgetFinalState extends State<WidgetFinal> {
                   childAspectRatio: 1.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return widgetFim[index];
+                  //print("_________ $index");
+                  return digit.retornoWidget(index);
                 },
               ),
             ),
@@ -211,27 +169,19 @@ class _WidgetFinalState extends State<WidgetFinal> {
                           ListTile(
                             leading: Icon(Icons.camera_alt),
                             title: Text('Tirar foto'),
-                            onTap: () async {
-                              Navigator.pop(dialogContext!);
-                              await digit.getImageCamera(
+                            onTap: () {
+                              digit.getImageCamera(
                                   dialogContext!, setStateCallback);
-                              setState(() {
-                                textoDigit = digit.textoDigit;
-                                widgetFim.add(getWidgetDigit(textoDigit));
-                              });
+                              Navigator.pop(dialogContext!);
                             },
                           ),
                           ListTile(
                             leading: Icon(Icons.photo),
                             title: Text('Escolher foto da galeria'),
-                            onTap: () async {
-                              Navigator.pop(dialogContext!);
-                              await digit.getImageGallery(
+                            onTap: () {
+                              digit.getImageGallery(
                                   dialogContext!, setStateCallback);
-                              setState(() {
-                                textoDigit = digit.textoDigit;
-                                widgetFim.add(getWidgetDigit(textoDigit));
-                              });
+                              Navigator.pop(dialogContext!);
                             },
                           ),
                         ],

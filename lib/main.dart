@@ -6,8 +6,9 @@ import 'material.dart';
 //https://pub.dev/packages/printing //para impressao
 //api Scanner https://pub.dev/packages/document_scanner_flutter/install
 
-//testar o uso de callback do setstate void ja criada no widgetfinal ver chatgpt
-
+//verificar o widgetapresentacao para solicitar o acesso a galeria que so aparece camera para
+//testar e tambem colocar esses dados para so passar para proxima tela se tiver com a camera
+//e permitida
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

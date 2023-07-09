@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/widget/final/widgetFinal.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,9 +51,31 @@ class MyHomePage extends StatelessWidget {
                 style: ButtonStyle(
                     elevation: MaterialStatePropertyAll(10),
                     backgroundColor: MaterialStatePropertyAll(Colors.blue)),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => WidgetFinal()));
+                onPressed: () async {
+                  PermissionStatus statusCamera =
+                      await Permission.camera.status;
+                  /*PermissionStatus statusGaleria =
+                      await Permission.photos.status;*/
+                  print(statusCamera);
+                  //print(statusGaleria);
+
+                  if (statusCamera.isDenied | !statusCamera.isGranted) {
+                    // Caso não tenha permissão para a câmera, solicita a permissão
+                    statusCamera = await Permission.camera.request();
+                  }
+
+                  /*if (statusGaleria.isDenied | !statusGaleria.isGranted) {
+                    // Caso não tenha permissão para a galeria, solicita a permissão
+                    statusGaleria = await Permission.photos.request();
+                  }*/
+
+                  if (statusCamera.isGranted) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => WidgetFinal()));
+                  } else {
+                    statusCamera = await Permission.camera.request();
+                    //statusGaleria = await Permission.photos.request();
+                  }
                 },
                 child: Text(
                   "Começar",
