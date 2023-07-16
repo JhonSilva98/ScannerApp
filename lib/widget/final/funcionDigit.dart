@@ -3,7 +3,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart'
     as rec;
-import 'package:scanner_app/material.dart';
 
 class DigitarUp {
   var imageFile;
@@ -43,8 +42,6 @@ class DigitarUp {
         await textRecognizer.processImage(image);
 
     textoDigit = recognizedText.text;
-    //getWidgetDigit(context);
-    //addListWidgetDigit(context);
     setStateCallback();
   }
 
@@ -57,7 +54,7 @@ class DigitarUp {
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Cortar',
-            toolbarColor: Colors.deepOrange,
+            toolbarColor: Colors.blueAccent,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
@@ -82,7 +79,6 @@ class DigitarUp {
     if (croppedFile != null) {
       XFile xFile = XFile(croppedFile.path);
       imageFile = rec.InputImage.fromFilePath(xFile.path);
-      await getRecognisedText(imageFile, context, setStateCallback);
       showDialog(
         context: context,
         barrierDismissible:
@@ -100,9 +96,12 @@ class DigitarUp {
           );
         },
       );
-      Future.delayed(Duration(seconds: 5), () {
+      await getRecognisedText(imageFile, context, setStateCallback);
+      Navigator.pop(context);
+
+      /*Future.delayed(Duration(seconds: 5), () {
         Navigator.pop(context); // Fecha o popup após 5 segundos
-      });
+      });*/
     }
   }
 }

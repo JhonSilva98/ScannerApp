@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/material.dart';
 import 'package:scanner_app/widget/final/funcionDigit.dart';
-/*import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart'
-    as rec;*/
 
 class WidgetFinal extends StatefulWidget {
   const WidgetFinal({super.key});
@@ -30,11 +26,54 @@ class _WidgetFinalState extends State<WidgetFinal> {
   DigitarUp digit = DigitarUp();
   var imageFile;
   String textoDigit = "";
+  List<Widget> widgetFim = [];
   BuildContext? dialogContext;
   void setStateCallback() {
     setState(() {
       // Atualize o estado ou execute outras ações necessárias
     });
+  }
+
+  Widget getWidgetDigit(String text) {
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Texto digitalizado'),
+              content: Text('$text'),
+              actions: [
+                TextButton(
+                  child: Text('Fechar'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: Column(
+        children: [
+          Container(
+            child: Icon(Icons.text_fields_rounded,
+                size: 24, color: Color(0xFF095ba4)),
+            padding: const EdgeInsets.all(12),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+                color: Colors.blueAccent,
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(12),
+                    bottomLeft: Radius.circular(12))),
+            child: Text("Txt ${GlobalVariable().myVariable["segundos"]!}"),
+            padding: const EdgeInsets.all(12),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -83,16 +122,15 @@ class _WidgetFinalState extends State<WidgetFinal> {
                 ),
               ),
               child: GridView.builder(
-                itemCount: digit.listWidgetDigit.length,
+                itemCount: widgetFim.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 10.0,
-                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 2.0,
+                  crossAxisSpacing: 2.0,
                   childAspectRatio: 1.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  //print("_________ $index");
-                  return digit.retornoWidget(index);
+                  return widgetFim[index];
                 },
               ),
             ),
@@ -169,19 +207,27 @@ class _WidgetFinalState extends State<WidgetFinal> {
                           ListTile(
                             leading: Icon(Icons.camera_alt),
                             title: Text('Tirar foto'),
-                            onTap: () {
-                              digit.getImageCamera(
-                                  dialogContext!, setStateCallback);
+                            onTap: () async {
                               Navigator.pop(dialogContext!);
+                              await digit.getImageCamera(
+                                  dialogContext!, setStateCallback);
+                              setState(() {
+                                textoDigit = digit.textoDigit;
+                                widgetFim.add(getWidgetDigit(textoDigit));
+                              });
                             },
                           ),
                           ListTile(
                             leading: Icon(Icons.photo),
                             title: Text('Escolher foto da galeria'),
-                            onTap: () {
-                              digit.getImageGallery(
-                                  dialogContext!, setStateCallback);
+                            onTap: () async {
                               Navigator.pop(dialogContext!);
+                              await digit.getImageGallery(
+                                  dialogContext!, setStateCallback);
+                              setState(() {
+                                textoDigit = digit.textoDigit;
+                                widgetFim.add(getWidgetDigit(textoDigit));
+                              });
                             },
                           ),
                         ],

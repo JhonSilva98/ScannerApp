@@ -54,27 +54,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () async {
                   PermissionStatus statusCamera =
                       await Permission.camera.status;
-                  /*PermissionStatus statusGaleria =
-                      await Permission.photos.status;*/
-                  print(statusCamera);
-                  //print(statusGaleria);
 
                   if (statusCamera.isDenied | !statusCamera.isGranted) {
                     // Caso não tenha permissão para a câmera, solicita a permissão
                     statusCamera = await Permission.camera.request();
                   }
 
-                  /*if (statusGaleria.isDenied | !statusGaleria.isGranted) {
-                    // Caso não tenha permissão para a galeria, solicita a permissão
-                    statusGaleria = await Permission.photos.request();
-                  }*/
-
                   if (statusCamera.isGranted) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => WidgetFinal()));
                   } else {
                     statusCamera = await Permission.camera.request();
-                    //statusGaleria = await Permission.photos.request();
                   }
                 },
                 child: Text(

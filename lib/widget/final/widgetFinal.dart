@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/material.dart';
 import 'package:scanner_app/widget/final/funcionDigit.dart';
-/*import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart'
-    as rec;*/
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WidgetFinal extends StatefulWidget {
   const WidgetFinal({super.key});
@@ -14,6 +11,7 @@ class WidgetFinal extends StatefulWidget {
 }
 
 class _WidgetFinalState extends State<WidgetFinal> {
+  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   String hora() {
     switch (GlobalVariable().myVariable["hora"]!) {
       case >= 5 && <= 12:
@@ -31,7 +29,9 @@ class _WidgetFinalState extends State<WidgetFinal> {
   var imageFile;
   String textoDigit = "";
   List<Widget> widgetFim = [];
+  //List<String> textguardDigit = [];
   BuildContext? dialogContext;
+
   void setStateCallback() {
     setState(() {
       // Atualize o estado ou execute outras ações necessárias
@@ -46,7 +46,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Texto digitalizado'),
-              content: Text('$text'),
+              content: SelectableText('$text'),
               actions: [
                 TextButton(
                   child: Text('Fechar'),
@@ -59,23 +59,72 @@ class _WidgetFinalState extends State<WidgetFinal> {
           },
         );
       },
-      child: Column(
-        children: [
-          Container(
-            child: Icon(Icons.text_fields_rounded,
-                size: 24, color: Color(0xFF095ba4)),
-            padding: const EdgeInsets.all(12),
-          ),
-          Container(
-            decoration: const BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(12),
-                    bottomLeft: Radius.circular(12))),
-            child: Text("Txt ${GlobalVariable().myVariable["segundos"]!}"),
-            padding: const EdgeInsets.all(12),
-          )
-        ],
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFF408bfa),
+          //border: Border.all(color: Color(0xFF095ba4), width: 2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 10,
+              width: 60,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            ),
+            Container(
+              height: 10,
+              width: 70,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            ),
+            Container(
+              height: 10,
+              width: 50,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
+                    height: 3,
+                  ),
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Icon(
+                    Icons.text_fields_rounded,
+                    color: Colors.white,
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        color: Colors.blueAccent,
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(7),
+                            bottomLeft: Radius.circular(7))),
+                    child: Text(
+                      "${GlobalVariable().myVariable["segundos"]!}",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -128,10 +177,9 @@ class _WidgetFinalState extends State<WidgetFinal> {
               child: GridView.builder(
                 itemCount: widgetFim.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   mainAxisSpacing: 10.0,
                   crossAxisSpacing: 10.0,
-                  childAspectRatio: 1.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return widgetFim[index];
