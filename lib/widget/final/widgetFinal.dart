@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/material.dart';
 import 'package:scanner_app/widget/final/funcionDigit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:scanner_app/widget/final/funcionShare.dart';
 
 class WidgetFinal extends StatefulWidget {
   const WidgetFinal({super.key});
@@ -11,7 +11,6 @@ class WidgetFinal extends StatefulWidget {
 }
 
 class _WidgetFinalState extends State<WidgetFinal> {
-  Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   String hora() {
     switch (GlobalVariable().myVariable["hora"]!) {
       case >= 5 && <= 12:
@@ -29,8 +28,8 @@ class _WidgetFinalState extends State<WidgetFinal> {
   var imageFile;
   String textoDigit = "";
   List<Widget> widgetFim = [];
-  //List<String> textguardDigit = [];
   BuildContext? dialogContext;
+  bool newverificador = false;
 
   void setStateCallback() {
     setState(() {
@@ -48,6 +47,11 @@ class _WidgetFinalState extends State<WidgetFinal> {
               title: Text('Texto digitalizado'),
               content: SelectableText('$text'),
               actions: [
+                IconButton(
+                    onPressed: () {
+                      shareOnWhatsApp(text);
+                    },
+                    icon: Icon(Icons.share_rounded)),
                 TextButton(
                   child: Text('Fechar'),
                   onPressed: () {
@@ -114,7 +118,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
                             bottomRight: Radius.circular(7),
                             bottomLeft: Radius.circular(7))),
                     child: Text(
-                      "${GlobalVariable().myVariable["segundos"]!}",
+                      "${text.length}",
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -263,10 +267,14 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               Navigator.pop(dialogContext!);
                               await digit.getImageCamera(
                                   dialogContext!, setStateCallback);
-                              setState(() {
-                                textoDigit = digit.textoDigit;
-                                widgetFim.add(getWidgetDigit(textoDigit));
-                              });
+                              newverificador = digit.verificador;
+                              if (newverificador) {
+                                setState(() {
+                                  textoDigit = digit.textoDigit;
+                                  widgetFim.add(getWidgetDigit(textoDigit));
+                                  newverificador = false;
+                                });
+                              }
                             },
                           ),
                           ListTile(
@@ -276,10 +284,14 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               Navigator.pop(dialogContext!);
                               await digit.getImageGallery(
                                   dialogContext!, setStateCallback);
-                              setState(() {
-                                textoDigit = digit.textoDigit;
-                                widgetFim.add(getWidgetDigit(textoDigit));
-                              });
+                              newverificador = digit.verificador;
+                              if (newverificador) {
+                                setState(() {
+                                  textoDigit = digit.textoDigit;
+                                  widgetFim.add(getWidgetDigit(textoDigit));
+                                  newverificador = false;
+                                });
+                              }
                             },
                           ),
                         ],

@@ -42,6 +42,7 @@ dependencies:
   google_ml_kit: ^0.7.3
   image_cropper: ^5.0.0
   permission_handler: ^10.4.2
+  flutter_share: ^2.0.0
 
 dev_dependencies:
   flutter_test:

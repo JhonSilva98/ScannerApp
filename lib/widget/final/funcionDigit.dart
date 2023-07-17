@@ -7,9 +7,11 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 class DigitarUp {
   var imageFile;
   String textoDigit = "";
+  bool verificador = false;
 
   Future<void> getImageGallery(
       BuildContext context, Function setStateCallback) async {
+    verificador = false;
     try {
       final pickedImage =
           await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -23,6 +25,7 @@ class DigitarUp {
 
   Future<void> getImageCamera(
       BuildContext context, Function setStateCallback) async {
+    verificador = false;
     try {
       final pickedImage =
           await ImagePicker().pickImage(source: ImageSource.camera);
@@ -42,6 +45,7 @@ class DigitarUp {
         await textRecognizer.processImage(image);
 
     textoDigit = recognizedText.text;
+    verificador = true;
     setStateCallback();
   }
 
@@ -77,6 +81,7 @@ class DigitarUp {
       ],
     );
     if (croppedFile != null) {
+      verificador = true;
       XFile xFile = XFile(croppedFile.path);
       imageFile = rec.InputImage.fromFilePath(xFile.path);
       showDialog(
