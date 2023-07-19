@@ -89,7 +89,7 @@ class DigitarUp {
         barrierDismissible:
             false, // Impede o fechamento do popup ao tocar fora dele
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
