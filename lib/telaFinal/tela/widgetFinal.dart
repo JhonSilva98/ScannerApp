@@ -24,8 +24,6 @@ class _WidgetFinalState extends State<WidgetFinal> {
     }
   }
 
-  bool popupicon = false;
-  bool popupiconDigit = false;
   DigitarUp digit = DigitarUp();
   ImpressaoUp impres = ImpressaoUp();
   var imageFile;
@@ -35,9 +33,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
   bool newverificador = false;
 
   void setStateCallback() {
-    setState(() {
-      // Atualize o estado ou execute outras ações necessárias
-    });
+    setState(() {});
   }
 
   Widget getWidgetDigit(String text) {
@@ -77,7 +73,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              height: 10,
+              height: 8,
               width: 60,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),
@@ -89,7 +85,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),
             ),
             Container(
-              height: 10,
+              height: 5,
               width: 50,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),
@@ -134,6 +130,10 @@ class _WidgetFinalState extends State<WidgetFinal> {
         ),
       ),
     );
+  }
+
+  Widget getWidgetImpres() {
+    return Container();
   }
 
   @override
@@ -217,14 +217,38 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               leading: const Icon(Icons.camera_alt),
                               title: const Text('Tirar foto'),
                               onTap: () async {
+                                Navigator.pop(dialogContext!);
                                 await impres.getImageCamera(dialogContext!);
+                                newverificador = impres.verificador;
+                                if (newverificador) {
+                                  setState(() {
+                                    widgetFim.add(Container(
+                                      color: Colors.black,
+                                      height: 50,
+                                      width: 50,
+                                    ));
+                                    newverificador = false;
+                                  });
+                                }
                               },
                             ),
                             ListTile(
                               leading: const Icon(Icons.photo),
                               title: const Text('Escolher foto da galeria'),
                               onTap: () async {
+                                Navigator.pop(dialogContext!);
                                 await impres.getImageGallery(dialogContext!);
+                                newverificador = impres.verificador;
+                                if (newverificador) {
+                                  setState(() {
+                                    widgetFim.add(Container(
+                                      color: Colors.black,
+                                      height: 50,
+                                      width: 50,
+                                    ));
+                                    newverificador = false;
+                                  });
+                                }
                               },
                             ),
                           ],
