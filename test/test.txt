@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:scanner_app/material.dart';
-import 'package:scanner_app/widget/final/funcionDigit.dart';
-import 'package:scanner_app/widget/final/funcionShare.dart';
+import 'package:scanner_app/telaInicial/tela/material.dart';
+import 'package:scanner_app/telaFinal/funcao/funcionDigit.dart';
+import 'package:scanner_app/telaFinal/funcao/funcionImpressao.dart';
+import 'package:scanner_app/telaFinal/funcao/funcionShare.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class WidgetFinal extends StatefulWidget {
   const WidgetFinal({super.key});
@@ -25,6 +27,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
   bool popupicon = false;
   bool popupiconDigit = false;
   DigitarUp digit = DigitarUp();
+  ImpressaoUp impres = ImpressaoUp();
   var imageFile;
   String textoDigit = "";
   List<Widget> widgetFim = [];
@@ -137,172 +140,152 @@ class _WidgetFinalState extends State<WidgetFinal> {
   Widget build(BuildContext context) {
     dialogContext = context;
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-                padding: const EdgeInsets.only(left: 20),
-                height: MediaQuery.of(context).size.width / 2,
-                decoration: const BoxDecoration(
-                    borderRadius:
-                        BorderRadius.vertical(bottom: Radius.circular(20)),
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xFF359fe7),
-                          Color(0xFFb9b2fb),
-                        ])),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Olá, ${hora()}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                )),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 1.27,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50.0),
-                  topRight: Radius.circular(50.0),
-                ),
-              ),
-              child: GridView.builder(
-                itemCount: widgetFim.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 10.0,
-                  crossAxisSpacing: 10.0,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return widgetFim[index];
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          /*if (popupicon == true)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: "Scanear",
-                  tooltip: "Scanear",
-                  mini: true,
-                  onPressed: () {},
-                  child: Icon(Icons.document_scanner),
-                ),
-                FloatingActionButton(
-                  heroTag: "Digitalizar",
-                  tooltip: "Digitalizar",
-                  mini: true,
-                  onPressed: () {
-                    setState(() {
-                      popupicon = false;
-                      popupiconDigit = true;
-                    });
-                  },
-                  child: Icon(Icons.abc),
-                )
-              ],
-            ),
-          if (popupiconDigit == true)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: "Camera",
-                  tooltip: "Camera",
-                  mini: true,
-                  onPressed: () {
-                    if (popupiconDigit == true) {
-                      getImageCamera();
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Icon(Icons.camera_alt_rounded),
-                ),
-                FloatingActionButton(
-                  heroTag: "Galeria",
-                  tooltip: "Galeria",
-                  mini: true,
-                  onPressed: () {
-                      getImageGallery();
-                      Navigator.pop(context);
-                  },
-                  child: Icon(Icons.photo),
-                )
-              ],
-            ),*/
-          const Padding(padding: EdgeInsets.only(top: 20)),
-          FloatingActionButton(
-            onPressed: () {
-              showModalBottomSheet(
-                  context: dialogContext!,
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      height: 200.0,
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.camera_alt),
-                            title: const Text('Tirar foto'),
-                            onTap: () async {
-                              Navigator.pop(dialogContext!);
-                              await digit.getImageCamera(
-                                  dialogContext!, setStateCallback);
-                              newverificador = digit.verificador;
-                              if (newverificador) {
-                                setState(() {
-                                  textoDigit = digit.textoDigit;
-                                  widgetFim.add(getWidgetDigit(textoDigit));
-                                  newverificador = false;
-                                });
-                              }
-                            },
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.photo),
-                            title: const Text('Escolher foto da galeria'),
-                            onTap: () async {
-                              Navigator.pop(dialogContext!);
-                              await digit.getImageGallery(
-                                  dialogContext!, setStateCallback);
-                              newverificador = digit.verificador;
-                              if (newverificador) {
-                                setState(() {
-                                  textoDigit = digit.textoDigit;
-                                  widgetFim.add(getWidgetDigit(textoDigit));
-                                  newverificador = false;
-                                });
-                              }
-                            },
-                          ),
-                        ],
+        body: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                  padding: const EdgeInsets.only(left: 20),
+                  height: MediaQuery.of(context).size.width / 2,
+                  decoration: const BoxDecoration(
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(20)),
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF359fe7),
+                            Color(0xFFb9b2fb),
+                          ])),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Olá, ${hora()}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.w700,
                       ),
-                    );
-                  });
-            },
-            child: const Icon(Icons.add),
-          ),
-        ],
-      ),
-    );
+                    ),
+                  )),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: MediaQuery.of(context).size.height / 1.27,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50.0),
+                    topRight: Radius.circular(50.0),
+                  ),
+                ),
+                child: GridView.builder(
+                  itemCount: widgetFim.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return widgetFim[index];
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          backgroundColor: Colors.blue,
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.document_scanner_rounded),
+              backgroundColor: Color.fromARGB(255, 75, 226, 221),
+              label: 'Impressão',
+              onTap: () {
+                showModalBottomSheet(
+                    context: dialogContext!,
+                    builder: (BuildContext context) {
+                      return SizedBox(
+                        height: 200.0,
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.camera_alt),
+                              title: const Text('Tirar foto'),
+                              onTap: () async {
+                                await impres.getImageCamera(dialogContext!);
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.photo),
+                              title: const Text('Escolher foto da galeria'),
+                              onTap: () async {
+                                await impres.getImageGallery(dialogContext!);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              },
+            ),
+            SpeedDialChild(
+              child: Icon(Icons.abc_outlined),
+              backgroundColor: Color.fromARGB(255, 88, 133, 157),
+              label: 'Digitalizar',
+              onTap: () {
+                showModalBottomSheet(
+                    context: dialogContext!,
+                    builder: (BuildContext context) {
+                      return SizedBox(
+                        height: 200.0,
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.camera_alt),
+                              title: const Text('Tirar foto'),
+                              onTap: () async {
+                                Navigator.pop(dialogContext!);
+                                await digit.getImageCamera(
+                                    dialogContext!, setStateCallback);
+                                newverificador = digit.verificador;
+                                if (newverificador) {
+                                  setState(() {
+                                    textoDigit = digit.textoDigit;
+                                    widgetFim.add(getWidgetDigit(textoDigit));
+                                    newverificador = false;
+                                  });
+                                }
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.photo),
+                              title: const Text('Escolher foto da galeria'),
+                              onTap: () async {
+                                Navigator.pop(dialogContext!);
+                                await digit.getImageGallery(
+                                    dialogContext!, setStateCallback);
+                                newverificador = digit.verificador;
+                                if (newverificador) {
+                                  setState(() {
+                                    textoDigit = digit.textoDigit;
+                                    widgetFim.add(getWidgetDigit(textoDigit));
+                                    newverificador = false;
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              },
+            ),
+          ],
+        ));
   }
 }
