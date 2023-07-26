@@ -4,9 +4,8 @@ import 'package:scanner_app/firebase/firebase_options.dart';
 import 'telaInicial/tela/material.dart';
 
 //https://pub.dev/packages/printing //para impressao
-//api Scanner https://pub.dev/packages/document_scanner_flutter/install
 
-//verificar a funcao impressao la que esta dando erro
+//alterar os pdfs salvos ver no chatgpt o exemplo
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

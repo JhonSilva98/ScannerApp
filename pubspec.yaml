@@ -45,7 +45,12 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   document_scanner_flutter:
     path: C:/Users/Jhonatan/Music/Flutter new past/document_scanner_flutter-master
-  url_launcher: ^6.1.12
+  open_file: ^3.3.2
+  cunning_document_scanner: ^1.1.2
+  pdf: ^3.10.4
+  path_provider: ^2.0.15
+  share_plus: ^7.0.2
+  image: ^4.0.17
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:scanner_app/telaInicial/tela/material.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionDigit.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionImpressao.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionShare.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:open_file/open_file.dart';
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pdfWidgets;
+import 'package:share_plus/share_plus.dart';
+import 'package:image/image.dart' as img;
 
 class WidgetFinal extends StatefulWidget {
   const WidgetFinal({super.key});
@@ -28,9 +38,12 @@ class _WidgetFinalState extends State<WidgetFinal> {
   ImpressaoUp impres = ImpressaoUp();
   var imageFile;
   String textoDigit = "";
+  //File ?fileImpres;
   List<Widget> widgetFim = [];
   BuildContext? dialogContext;
   bool newverificador = false;
+  List<String> imagesPath = [];
+  XFile? listPdf;
 
   void setStateCallback() {
     setState(() {});
@@ -218,11 +231,18 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               title: const Text('Tirar foto'),
                               onTap: () async {
                                 Navigator.pop(dialogContext!);
-                                await impres.getImageCamera(dialogContext!);
-                                newverificador = impres.verificador;
+                                await _pickImages();
                                 if (newverificador) {
                                   setState(() {
                                     widgetFim.add(Container(
+                                      child: IconButton(
+                                          onPressed: () {
+                                            OpenFile.open(textoDigit);
+                                          },
+                                          icon: Icon(
+                                            Icons.ac_unit_rounded,
+                                            color: Colors.white,
+                                          )),
                                       color: Colors.black,
                                       height: 50,
                                       width: 50,
@@ -240,8 +260,19 @@ class _WidgetFinalState extends State<WidgetFinal> {
                                 await impres.getImageGallery(dialogContext!);
                                 newverificador = impres.verificador;
                                 if (newverificador) {
+                                  textoDigit = impres.pdfFinal;
+                                  print(
+                                      "$textoDigit,#######################################");
                                   setState(() {
                                     widgetFim.add(Container(
+                                      child: IconButton(
+                                          onPressed: () {
+                                            OpenFile.open(textoDigit);
+                                          },
+                                          icon: Icon(
+                                            Icons.ac_unit_rounded,
+                                            color: Colors.white,
+                                          )),
                                       color: Colors.black,
                                       height: 50,
                                       width: 50,
@@ -311,5 +342,66 @@ class _WidgetFinalState extends State<WidgetFinal> {
             ),
           ],
         ));
+  }
+
+  Future<void> _pickImages() async {
+    newverificador = false;
+    List<String>? pickedImages = await CunningDocumentScanner.getPictures();
+
+    if (pickedImages!.isNotEmpty) {
+      for (var imagePath in pickedImages) {
+        final originalImage = File(imagePath);
+        final bytes = await originalImage.readAsBytes();
+        final image = img.decodeImage(bytes);
+        final blackAndWhiteImage = img.grayscale(image!);
+
+        final newImagePath = imagePath.replaceAll('.jpg', '_bw.jpg');
+        File(newImagePath).writeAsBytesSync(img.encodeJpg(blackAndWhiteImage));
+        imagesPath.add(newImagePath);
+        await originalImage.delete();
+      }
+      await convertImagesToPdf(imagesPath);
+    }
+  }
+
+  Future<void> convertImagesToPdf(List<String> imagesPath) async {
+    if (imagesPath.isNotEmpty) {
+      final pdf = pdfWidgets.Document();
+      for (var imagePath in imagesPath) {
+        final pdfImage =
+            pdfWidgets.MemoryImage(File(imagePath).readAsBytesSync());
+        pdf.addPage(
+          pdfWidgets.Page(
+            build: (context) => pdfWidgets.Image(pdfImage),
+          ),
+        );
+      }
+
+      final appDir = await getExternalStorageDirectory();
+      final caminhoPdf =
+          '${appDir!.path}/output.pdf'; // Usar o caminho do armazenamento externo
+      final arquivoPdf = File(caminhoPdf);
+      arquivoPdf.writeAsBytesSync(await pdf.save());
+
+      print("PDF saved at: ${arquivoPdf.path}");
+      textoDigit = arquivoPdf.path;
+
+      setState(() {
+        listPdf = XFile(arquivoPdf.path);
+        newverificador = true;
+      });
+
+      // Compartilhar o arquivo PDF
+      await Share.shareXFiles([XFile(arquivoPdf.path)],
+          text: 'Compartilhando PDF');
+
+      for (var imagePath in imagesPath) {
+        File(imagePath).delete();
+      }
+
+      setState(() {
+        imagesPath.clear();
+      });
+    }
   }
 }

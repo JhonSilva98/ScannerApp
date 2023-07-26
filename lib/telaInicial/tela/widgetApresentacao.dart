@@ -74,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context) => const WidgetFinal()));
                   } else {
                     statusCamera = await Permission.camera.request();
+                    statusArquivos = await Permission.storage.request();
                   }
                 },
                 child: const Text(
