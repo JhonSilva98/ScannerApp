@@ -18,12 +18,6 @@ class WidgetFinal extends StatefulWidget {
 
 class _WidgetFinalState extends State<WidgetFinal> {
   funcionImpressUP impres = funcionImpressUP();
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    //impres.delListPDF();
-  }
 
   String hora() {
     switch (GlobalVariable().myVariable["hora"]!) {
