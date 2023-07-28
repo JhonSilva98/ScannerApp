@@ -5,7 +5,7 @@ import 'telaInicial/tela/material.dart';
 
 //https://pub.dev/packages/printing //para impressao
 
-//alterar os pdfs salvos ver no chatgpt o exemplo
+//fiz a funcao funcionExitAppDelete verificar e testar para ver se quando fechar apaga
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

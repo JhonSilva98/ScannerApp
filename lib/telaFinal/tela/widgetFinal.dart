@@ -14,6 +14,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:share_plus/share_plus.dart';
 import 'package:image/image.dart' as img;
+import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 class WidgetFinal extends StatefulWidget {
   const WidgetFinal({super.key});
@@ -23,6 +25,13 @@ class WidgetFinal extends StatefulWidget {
 }
 
 class _WidgetFinalState extends State<WidgetFinal> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    delListPDF();
+  }
+
   String hora() {
     switch (GlobalVariable().myVariable["hora"]!) {
       case >= 5 && <= 12:
@@ -38,115 +47,104 @@ class _WidgetFinalState extends State<WidgetFinal> {
   ImpressaoUp impres = ImpressaoUp();
   var imageFile;
   String textoDigit = "";
-  //File ?fileImpres;
   List<Widget> widgetFim = [];
   BuildContext? dialogContext;
   bool newverificador = false;
   List<String> imagesPath = [];
   XFile? listPdf;
+  String namePDF = "";
+  String caminhoPDF = "";
+  int? pos;
+  List<String> caminhoPDFDelete = [];
 
   void setStateCallback() {
     setState(() {});
   }
 
-  Widget getWidgetDigit(String text) {
+  Widget getWidget(String text, String icone, bool funcion,
+      {String? namePDF, int? index}) {
     return GestureDetector(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Texto digitalizado'),
-              content: SelectableText(text),
-              actions: [
-                IconButton(
+        if (funcion) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Texto digitalizado'),
+                content: SelectableText(text),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        shareOnWhatsApp(text);
+                      },
+                      icon: const Icon(Icons.share_rounded)),
+                  TextButton(
+                    child: const Text('Fechar'),
                     onPressed: () {
-                      shareOnWhatsApp(text);
+                      Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.share_rounded)),
-                TextButton(
-                  child: const Text('Fechar'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          OpenFile.open(text);
+        }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF408bfa),
-          //border: Border.all(color: Color(0xFF095ba4), width: 2),
-          borderRadius: BorderRadius.circular(10),
-        ),
+      onLongPress: () {
+        if (funcion == false) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Texto digitalizado'),
+                content: SelectableText("Deseja apagar?"),
+                actions: [
+                  TextButton(
+                    child: const Text('Apagar'),
+                    onPressed: () {
+                      setState(() {
+                        widgetFim.remove(index);
+                        File(text).delete();
+                      });
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Fechar'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      },
+      child: SizedBox(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              height: 8,
-              width: 60,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            Expanded(
+              flex: 3,
+              child: Image.asset(
+                icone,
+                height: 100,
+                width: 100,
+              ),
             ),
-            Container(
-              height: 10,
-              width: 70,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            ),
-            Container(
-              height: 5,
-              width: 50,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                    height: 3,
-                  ),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Expanded(
-                  child: Icon(
-                    Icons.text_fields_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.blueAccent,
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(7),
-                            bottomLeft: Radius.circular(7))),
-                    padding: const EdgeInsets.all(12),
-                    child: Text(
-                      "${text.length}",
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
+            Expanded(
+              flex: 1,
+              child: Text(
+                "${funcion ? text.length : namePDF}",
+                style: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold),
+              ),
             )
           ],
         ),
       ),
     );
-  }
-
-  Widget getWidgetImpres() {
-    return Container();
   }
 
   @override
@@ -202,6 +200,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
                     crossAxisSpacing: 10.0,
                   ),
                   itemBuilder: (BuildContext context, int index) {
+                    pos = index;
                     return widgetFim[index];
                   },
                 ),
@@ -232,21 +231,12 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               onTap: () async {
                                 Navigator.pop(dialogContext!);
                                 await _pickImages();
+
                                 if (newverificador) {
                                   setState(() {
-                                    widgetFim.add(Container(
-                                      child: IconButton(
-                                          onPressed: () {
-                                            OpenFile.open(textoDigit);
-                                          },
-                                          icon: Icon(
-                                            Icons.ac_unit_rounded,
-                                            color: Colors.white,
-                                          )),
-                                      color: Colors.black,
-                                      height: 50,
-                                      width: 50,
-                                    ));
+                                    widgetFim.add(getWidget(
+                                        textoDigit, "assets/pdf.png", false,
+                                        namePDF: namePDF, index: pos));
                                     newverificador = false;
                                   });
                                 }
@@ -257,26 +247,12 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               title: const Text('Escolher foto da galeria'),
                               onTap: () async {
                                 Navigator.pop(dialogContext!);
-                                await impres.getImageGallery(dialogContext!);
-                                newverificador = impres.verificador;
+                                await _pickImages();
                                 if (newverificador) {
-                                  textoDigit = impres.pdfFinal;
-                                  print(
-                                      "$textoDigit,#######################################");
                                   setState(() {
-                                    widgetFim.add(Container(
-                                      child: IconButton(
-                                          onPressed: () {
-                                            OpenFile.open(textoDigit);
-                                          },
-                                          icon: Icon(
-                                            Icons.ac_unit_rounded,
-                                            color: Colors.white,
-                                          )),
-                                      color: Colors.black,
-                                      height: 50,
-                                      width: 50,
-                                    ));
+                                    widgetFim.add(getWidget(
+                                        textoDigit, "assets/pdf.png", false,
+                                        namePDF: namePDF, index: pos));
                                     newverificador = false;
                                   });
                                 }
@@ -311,7 +287,9 @@ class _WidgetFinalState extends State<WidgetFinal> {
                                 if (newverificador) {
                                   setState(() {
                                     textoDigit = digit.textoDigit;
-                                    widgetFim.add(getWidgetDigit(textoDigit));
+                                    widgetFim.add(getWidget(
+                                        textoDigit, "assets/txt.png", true,
+                                        index: pos));
                                     newverificador = false;
                                   });
                                 }
@@ -328,7 +306,9 @@ class _WidgetFinalState extends State<WidgetFinal> {
                                 if (newverificador) {
                                   setState(() {
                                     textoDigit = digit.textoDigit;
-                                    widgetFim.add(getWidgetDigit(textoDigit));
+                                    widgetFim.add(getWidget(
+                                        textoDigit, "assets/txt.png", true,
+                                        index: pos));
                                     newverificador = false;
                                   });
                                 }
@@ -346,8 +326,24 @@ class _WidgetFinalState extends State<WidgetFinal> {
 
   Future<void> _pickImages() async {
     newverificador = false;
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Impede o fechamento do popup ao tocar fora dele
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16.0),
+              Text('Carregando...'),
+            ],
+          ),
+        );
+      },
+    );
     List<String>? pickedImages = await CunningDocumentScanner.getPictures();
-
     if (pickedImages!.isNotEmpty) {
       for (var imagePath in pickedImages) {
         final originalImage = File(imagePath);
@@ -360,7 +356,11 @@ class _WidgetFinalState extends State<WidgetFinal> {
         imagesPath.add(newImagePath);
         await originalImage.delete();
       }
+
       await convertImagesToPdf(imagesPath);
+      Navigator.pop(context);
+    } else {
+      Navigator.pop(context);
     }
   }
 
@@ -378,12 +378,17 @@ class _WidgetFinalState extends State<WidgetFinal> {
       }
 
       final appDir = await getExternalStorageDirectory();
+      final name = DateTime.now().millisecondsSinceEpoch;
+      namePDF = name.toString();
       final caminhoPdf =
-          '${appDir!.path}/output.pdf'; // Usar o caminho do armazenamento externo
+          '${appDir!.path}/$name.pdf'; // Usar o caminho do armazenamento externo
       final arquivoPdf = File(caminhoPdf);
       arquivoPdf.writeAsBytesSync(await pdf.save());
 
       print("PDF saved at: ${arquivoPdf.path}");
+      caminhoPDFDelete.add(arquivoPdf.path);
+      await saveList(caminhoPDFDelete);
+
       textoDigit = arquivoPdf.path;
 
       setState(() {
@@ -402,6 +407,29 @@ class _WidgetFinalState extends State<WidgetFinal> {
       setState(() {
         imagesPath.clear();
       });
+    }
+  }
+
+  // Função para salvar a lista no armazenamento local
+  Future<void> saveList(List<String> myList) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('myListKey', myList);
+  }
+
+// Função para recuperar a lista do armazenamento local
+  Future<List<String>> getList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList('myListKey') ??
+        []; // Retorna uma lista vazia caso não haja valor salvo
+  }
+
+  Future<void> delListPDF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('myListKey')) {
+      List<String>? lista = prefs.getStringList('myListKey');
+      for (var caminho in lista!) {
+        File(caminho).delete();
+      }
     }
   }
 }

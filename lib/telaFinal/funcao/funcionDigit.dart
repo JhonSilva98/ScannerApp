@@ -30,7 +30,7 @@ class DigitarUp {
       final pickedImage =
           await ImagePicker().pickImage(source: ImageSource.camera);
       if (pickedImage != null) {
-        cropImage(pickedImage, context, setStateCallback);
+        await cropImage(pickedImage, context, setStateCallback);
       }
     } catch (e) {
       imageFile = null;
