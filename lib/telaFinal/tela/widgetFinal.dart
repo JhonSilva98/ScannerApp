@@ -1,21 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:scanner_app/telaFinal/funcao/funcionImpress.dart';
 import 'package:scanner_app/telaInicial/tela/material.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionDigit.dart';
-import 'package:scanner_app/telaFinal/funcao/funcionImpressao.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionShare.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:open_file/open_file.dart';
-import 'package:cunning_document_scanner/cunning_document_scanner.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:share_plus/share_plus.dart';
-import 'package:image/image.dart' as img;
-import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 
 class WidgetFinal extends StatefulWidget {
   const WidgetFinal({super.key});
@@ -25,11 +17,12 @@ class WidgetFinal extends StatefulWidget {
 }
 
 class _WidgetFinalState extends State<WidgetFinal> {
+  funcionImpressUP impres = funcionImpressUP();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    delListPDF();
+    //impres.delListPDF();
   }
 
   String hora() {
@@ -44,7 +37,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
   }
 
   DigitarUp digit = DigitarUp();
-  ImpressaoUp impres = ImpressaoUp();
+
   var imageFile;
   String textoDigit = "";
   List<Widget> widgetFim = [];
@@ -90,36 +83,6 @@ class _WidgetFinalState extends State<WidgetFinal> {
           );
         } else {
           OpenFile.open(text);
-        }
-      },
-      onLongPress: () {
-        if (funcion == false) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Texto digitalizado'),
-                content: SelectableText("Deseja apagar?"),
-                actions: [
-                  TextButton(
-                    child: const Text('Apagar'),
-                    onPressed: () {
-                      setState(() {
-                        widgetFim.remove(index);
-                        File(text).delete();
-                      });
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('Fechar'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
         }
       },
       child: SizedBox(
@@ -230,8 +193,14 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               title: const Text('Tirar foto'),
                               onTap: () async {
                                 Navigator.pop(dialogContext!);
-                                await _pickImages();
-
+                                await impres.pickImages(
+                                    dialogContext!, setStateCallback);
+                                newverificador = impres.newverificador;
+                                imagesPath = impres.imagesPath;
+                                namePDF = impres.namePDF;
+                                caminhoPDFDelete = impres.caminhoPDFDelete;
+                                textoDigit = impres.textoDigit;
+                                listPdf = impres.listPdf;
                                 if (newverificador) {
                                   setState(() {
                                     widgetFim.add(getWidget(
@@ -247,7 +216,9 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               title: const Text('Escolher foto da galeria'),
                               onTap: () async {
                                 Navigator.pop(dialogContext!);
-                                await _pickImages();
+                                await impres.pickImages(
+                                    dialogContext!, setStateCallback);
+
                                 if (newverificador) {
                                   setState(() {
                                     widgetFim.add(getWidget(
@@ -322,114 +293,5 @@ class _WidgetFinalState extends State<WidgetFinal> {
             ),
           ],
         ));
-  }
-
-  Future<void> _pickImages() async {
-    newverificador = false;
-    showDialog(
-      context: context,
-      barrierDismissible:
-          false, // Impede o fechamento do popup ao tocar fora dele
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16.0),
-              Text('Carregando...'),
-            ],
-          ),
-        );
-      },
-    );
-    List<String>? pickedImages = await CunningDocumentScanner.getPictures();
-    if (pickedImages!.isNotEmpty) {
-      for (var imagePath in pickedImages) {
-        final originalImage = File(imagePath);
-        final bytes = await originalImage.readAsBytes();
-        final image = img.decodeImage(bytes);
-        final blackAndWhiteImage = img.grayscale(image!);
-
-        final newImagePath = imagePath.replaceAll('.jpg', '_bw.jpg');
-        File(newImagePath).writeAsBytesSync(img.encodeJpg(blackAndWhiteImage));
-        imagesPath.add(newImagePath);
-        await originalImage.delete();
-      }
-
-      await convertImagesToPdf(imagesPath);
-      Navigator.pop(context);
-    } else {
-      Navigator.pop(context);
-    }
-  }
-
-  Future<void> convertImagesToPdf(List<String> imagesPath) async {
-    if (imagesPath.isNotEmpty) {
-      final pdf = pdfWidgets.Document();
-      for (var imagePath in imagesPath) {
-        final pdfImage =
-            pdfWidgets.MemoryImage(File(imagePath).readAsBytesSync());
-        pdf.addPage(
-          pdfWidgets.Page(
-            build: (context) => pdfWidgets.Image(pdfImage),
-          ),
-        );
-      }
-
-      final appDir = await getExternalStorageDirectory();
-      final name = DateTime.now().millisecondsSinceEpoch;
-      namePDF = name.toString();
-      final caminhoPdf =
-          '${appDir!.path}/$name.pdf'; // Usar o caminho do armazenamento externo
-      final arquivoPdf = File(caminhoPdf);
-      arquivoPdf.writeAsBytesSync(await pdf.save());
-
-      print("PDF saved at: ${arquivoPdf.path}");
-      caminhoPDFDelete.add(arquivoPdf.path);
-      await saveList(caminhoPDFDelete);
-
-      textoDigit = arquivoPdf.path;
-
-      setState(() {
-        listPdf = XFile(arquivoPdf.path);
-        newverificador = true;
-      });
-
-      // Compartilhar o arquivo PDF
-      await Share.shareXFiles([XFile(arquivoPdf.path)],
-          text: 'Compartilhando PDF');
-
-      for (var imagePath in imagesPath) {
-        File(imagePath).delete();
-      }
-
-      setState(() {
-        imagesPath.clear();
-      });
-    }
-  }
-
-  // Função para salvar a lista no armazenamento local
-  Future<void> saveList(List<String> myList) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('myListKey', myList);
-  }
-
-// Função para recuperar a lista do armazenamento local
-  Future<List<String>> getList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList('myListKey') ??
-        []; // Retorna uma lista vazia caso não haja valor salvo
-  }
-
-  Future<void> delListPDF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('myListKey')) {
-      List<String>? lista = prefs.getStringList('myListKey');
-      for (var caminho in lista!) {
-        File(caminho).delete();
-      }
-    }
   }
 }
