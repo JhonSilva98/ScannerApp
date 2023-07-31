@@ -1,4 +1,4 @@
-Descrição do ScannerApp
+# ScannerApp
 
 Visão Geral:
 Este é um aplicativo móvel desenvolvido em Flutter que permite aos usuários digitalizar textos e imagens usando a câmera do dispositivo. O aplicativo utiliza uma série de pacotes e integrações para facilitar a digitalização de documentos e oferecer opções para compartilhar ou imprimir o conteúdo escaneado. A integração com o Firebase possibilita o armazenamento e compartilhamento dos documentos digitalizados na nuvem.
