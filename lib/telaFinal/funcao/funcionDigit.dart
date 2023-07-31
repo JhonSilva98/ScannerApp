@@ -5,6 +5,7 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
     as rec;
 
 class DigitarUp {
+  // ignore: prefer_typing_uninitialized_variables
   var imageFile;
   String textoDigit = "";
   bool verificador = false;

@@ -1,19 +1,16 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
+//import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:image/image.dart' as img;
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class funcionImpressUP {
+class FuncionImpressUP {
   bool newverificador = false;
   List<String> imagesPath = [];
   String namePDF = "";
-  List<String> caminhoPDFDelete = [];
   String textoDigit = "";
   XFile? listPdf;
 
@@ -42,7 +39,13 @@ class funcionImpressUP {
         final originalImage = File(imagePath);
         final bytes = await originalImage.readAsBytes();
         final image = img.decodeImage(bytes);
-        final blackAndWhiteImage = img.grayscale(image!);
+        //final imageGrey = img.grayscale(image!);
+        final blackAndWhiteImage = img.adjustColor(image!,
+            gamma: 1,
+            contrast: 1,
+            brightness: 1,
+            exposure: 1,
+            saturation: 1); //img.grayscale(image!);
 
         final newImagePath = imagePath.replaceAll('.jpg', '_bw.jpg');
         File(newImagePath).writeAsBytesSync(img.encodeJpg(blackAndWhiteImage));
@@ -80,8 +83,6 @@ class funcionImpressUP {
       arquivoPdf.writeAsBytesSync(await pdf.save());
 
       print("PDF saved at: ${arquivoPdf.path}");
-      caminhoPDFDelete.add(arquivoPdf.path);
-      await saveList(caminhoPDFDelete);
 
       textoDigit = arquivoPdf.path;
 
@@ -89,39 +90,12 @@ class funcionImpressUP {
       newverificador = true;
       setState();
 
-      // Compartilhar o arquivo PDF
-      await Share.shareXFiles([XFile(arquivoPdf.path)],
-          text: 'Compartilhando PDF');
-
       for (var imagePath in imagesPath) {
         File(imagePath).delete();
       }
 
       imagesPath.clear();
       setState();
-    }
-  }
-
-  // Função para salvar a lista no armazenamento local
-  Future<void> saveList(List<String> myList) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('myListKey', myList);
-  }
-
-// Função para recuperar a lista do armazenamento local
-  Future<List<String>> getList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList('myListKey') ??
-        []; // Retorna uma lista vazia caso não haja valor salvo
-  }
-
-  Future<void> delListPDF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('myListKey')) {
-      List<String>? lista = prefs.getStringList('myListKey');
-      for (var caminho in lista!) {
-        File(caminho).delete();
-      }
     }
   }
 }

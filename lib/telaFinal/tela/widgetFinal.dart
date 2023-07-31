@@ -1,7 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionImpress.dart';
+import 'package:scanner_app/telaFinal/funcao/funcionImpressao.dart';
 import 'package:scanner_app/telaInicial/tela/material.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionDigit.dart';
 import 'package:scanner_app/telaFinal/funcao/funcionShare.dart';
@@ -17,7 +16,8 @@ class WidgetFinal extends StatefulWidget {
 }
 
 class _WidgetFinalState extends State<WidgetFinal> {
-  funcionImpressUP impres = funcionImpressUP();
+  FuncionImpressUP impres = FuncionImpressUP();
+  ImpressaoUp impresTest = ImpressaoUp();
 
   String hora() {
     switch (GlobalVariable().myVariable["hora"]!) {
@@ -32,12 +32,12 @@ class _WidgetFinalState extends State<WidgetFinal> {
 
   DigitarUp digit = DigitarUp();
 
+  // ignore: prefer_typing_uninitialized_variables
   var imageFile;
   String textoDigit = "";
   List<Widget> widgetFim = [];
   BuildContext? dialogContext;
   bool newverificador = false;
-  List<String> imagesPath = [];
   XFile? listPdf;
   String namePDF = "";
   String caminhoPDF = "";
@@ -167,13 +167,13 @@ class _WidgetFinalState extends State<WidgetFinal> {
         ),
         floatingActionButton: SpeedDial(
           animatedIcon: AnimatedIcons.menu_close,
-          animatedIconTheme: IconThemeData(size: 22.0),
+          animatedIconTheme: const IconThemeData(size: 22.0),
           backgroundColor: Colors.blue,
           children: [
             SpeedDialChild(
-              child: Icon(Icons.document_scanner_rounded),
-              backgroundColor: Color.fromARGB(255, 75, 226, 221),
-              label: 'Impressão',
+              child: const Icon(Icons.document_scanner_rounded),
+              backgroundColor: const Color.fromARGB(255, 75, 226, 221),
+              label: 'Escanear',
               onTap: () {
                 showModalBottomSheet(
                     context: dialogContext!,
@@ -190,9 +190,7 @@ class _WidgetFinalState extends State<WidgetFinal> {
                                 await impres.pickImages(
                                     dialogContext!, setStateCallback);
                                 newverificador = impres.newverificador;
-                                imagesPath = impres.imagesPath;
                                 namePDF = impres.namePDF;
-                                caminhoPDFDelete = impres.caminhoPDFDelete;
                                 textoDigit = impres.textoDigit;
                                 listPdf = impres.listPdf;
                                 if (newverificador) {
@@ -210,14 +208,22 @@ class _WidgetFinalState extends State<WidgetFinal> {
                               title: const Text('Escolher foto da galeria'),
                               onTap: () async {
                                 Navigator.pop(dialogContext!);
-                                await impres.pickImages(
-                                    dialogContext!, setStateCallback);
-
+                                await impresTest
+                                    .getImageGallery(dialogContext!);
+                                /*await impres.pickImages(
+                                    dialogContext!, setStateCallback);*/
+                                textoDigit = impresTest.pdfFinal;
+                                newverificador = impresTest.verificador;
                                 if (newverificador) {
                                   setState(() {
+                                    List<String> textoName =
+                                        textoDigit.split("/");
+                                    String textCutPDF = textoName.last;
+                                    String textCutPDFfinal =
+                                        textCutPDF.replaceAll(".pdf", "");
                                     widgetFim.add(getWidget(
                                         textoDigit, "assets/pdf.png", false,
-                                        namePDF: namePDF, index: pos));
+                                        namePDF: textCutPDFfinal, index: pos));
                                     newverificador = false;
                                   });
                                 }
@@ -230,8 +236,8 @@ class _WidgetFinalState extends State<WidgetFinal> {
               },
             ),
             SpeedDialChild(
-              child: Icon(Icons.abc_outlined),
-              backgroundColor: Color.fromARGB(255, 88, 133, 157),
+              child: const Icon(Icons.abc_outlined),
+              backgroundColor: const Color.fromARGB(255, 88, 133, 157),
               label: 'Digitalizar',
               onTap: () {
                 showModalBottomSheet(
