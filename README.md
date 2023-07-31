@@ -30,6 +30,7 @@ Lembre de alterar a chave do firebase.
 ![Screenshot_20230730-220104](https://github.com/JhonSilva98/ScannerApp/assets/53879683/bc7d1170-069d-4bd0-bb27-7109a414e623)
 ![Screenshot_20230730-220115](https://github.com/JhonSilva98/ScannerApp/assets/53879683/2ddfda42-7316-4885-bf71-d5c0f8c150d6)
 ![Screenshot_20230730-220550](https://github.com/JhonSilva98/ScannerApp/assets/53879683/9d271d67-7e69-4ac2-be18-032f977110bd)
+![Screenshot_20230730-221908](https://github.com/JhonSilva98/ScannerApp/assets/53879683/838b4a07-ca7a-4434-8f62-7b1c63e9b749)
 ![Screenshot_20230730-220601_Drive](https://github.com/JhonSilva98/ScannerApp/assets/53879683/6f67b33b-05f9-4ae9-a083-56ad1878a1cd)
 
 
