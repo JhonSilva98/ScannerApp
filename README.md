@@ -23,14 +23,17 @@ O aplicativo de digitalização de texto e imagem para impressão é uma ferrame
 
 Lembre de alterar a chave do firebase.
 
-![Screenshot_20230730-220601_Drive](https://github.com/JhonSilva98/ScannerApp/assets/53879683/237b8a6d-1c15-4210-ad6d-360f4916f42a)
-![Screenshot_20230730-220550](https://github.com/JhonSilva98/ScannerApp/assets/53879683/9a6d4feb-148d-4a68-83af-db8e0ae7cfa0)
-![Screenshot_20230730-220115](https://github.com/JhonSilva98/ScannerApp/assets/53879683/3f41812e-6d33-4b7f-9b84-7071a28e7581)
-![Screenshot_20230730-220104](https://github.com/JhonSilva98/ScannerApp/assets/53879683/b1bb653e-7c19-4be9-8e26-ddd201727c70)
-![Screenshot_20230730-220026](https://github.com/JhonSilva98/ScannerApp/assets/53879683/c4f25559-acdd-4fc1-b008-ae1f1dd89dab)
-![Screenshot_20230730-220015](https://github.com/JhonSilva98/ScannerApp/assets/53879683/ef23d3f5-f6df-4641-9173-00f971ec71c8)
-![Screenshot_20230730-220008_Permission controller](https://github.com/JhonSilva98/ScannerApp/assets/53879683/b91cdd7a-4044-40f9-92e1-4dcc5bdbddb7)
-![Screenshot_20230730-220001](https://github.com/JhonSilva98/ScannerApp/assets/53879683/01889a2a-c98a-4a2d-890e-41ffbe633f6b)
+![Screenshot_20230730-220001](https://github.com/JhonSilva98/ScannerApp/assets/53879683/57264eda-3763-488a-9394-46812f8a09e6)
+![Screenshot_20230730-220008_Permission controller](https://github.com/JhonSilva98/ScannerApp/assets/53879683/4884fdbc-ddfa-4bca-9561-23a7e8beab5d)
+![Screenshot_20230730-220015](https://github.com/JhonSilva98/ScannerApp/assets/53879683/02a2dc8f-7c1a-4598-a855-fdb6abb337e6)
+![Screenshot_20230730-220026](https://github.com/JhonSilva98/ScannerApp/assets/53879683/d92ea01e-e1de-4f01-ac3c-1e686f8d39d2)
+![Screenshot_20230730-220104](https://github.com/JhonSilva98/ScannerApp/assets/53879683/bc7d1170-069d-4bd0-bb27-7109a414e623)
+![Screenshot_20230730-220115](https://github.com/JhonSilva98/ScannerApp/assets/53879683/2ddfda42-7316-4885-bf71-d5c0f8c150d6)
+![Screenshot_20230730-220550](https://github.com/JhonSilva98/ScannerApp/assets/53879683/9d271d67-7e69-4ac2-be18-032f977110bd)
+![Screenshot_20230730-220601_Drive](https://github.com/JhonSilva98/ScannerApp/assets/53879683/6f67b33b-05f9-4ae9-a083-56ad1878a1cd)
+
+
+
 
 
 
